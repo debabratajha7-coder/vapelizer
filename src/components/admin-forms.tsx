@@ -16,7 +16,7 @@ export function ProductForm({
 }) {
   const [state, action, pending] = useActionState(saveProduct, initial);
   return (
-    <form action={action} className="grid max-w-3xl gap-4">
+    <form action={action} encType="multipart/form-data" className="grid max-w-3xl gap-4">
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
       <label className="text-sm">
         Name
@@ -81,11 +81,21 @@ export function ProductForm({
         <input type="checkbox" name="featured" defaultChecked={product?.featured} />
         Featured on the homepage
       </label>
-      <label className="text-sm">
-        Images
-        <input name="images" type="file" accept="image/*" multiple className="mt-1.5 block text-sm" />
-      </label>
-      <p className="text-xs text-muted">Uploads go to Cloudinary. Products can be saved without photos.</p>
+      <div className="rounded-2xl border border-dashed border-line bg-sand/40 p-4">
+        <p className="text-sm font-medium">Product photos</p>
+        <p className="mt-1 text-xs text-muted">
+          {product?.images.length
+            ? "Add more photos below. Existing ones stay until you remove them above."
+            : "Choose one or more images. Uploads go to Cloudinary."}
+        </p>
+        <input
+          name="images"
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          multiple
+          className="mt-3 block w-full cursor-pointer rounded-xl border border-line bg-white px-3 py-3 text-sm file:mr-3 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-paper"
+        />
+      </div>
       {state.error ? <p className="text-sm text-ember">{state.error}</p> : null}
       <button className={`${buttonClass} w-fit`} disabled={pending}>
         {pending ? "Saving" : "Save product"}
@@ -97,7 +107,7 @@ export function ProductForm({
 export function CategoryForm({ categories }: { categories: CategoryOption[] }) {
   const [state, action, pending] = useActionState(saveCategory, initial);
   return (
-    <form action={action} className="grid max-w-xl gap-3 rounded-2xl border border-line bg-white p-5">
+    <form action={action} encType="multipart/form-data" className="grid max-w-xl gap-3 rounded-2xl border border-line bg-white p-5">
       <h2 className="font-display text-2xl">New category</h2>
       <input name="name" required placeholder="Name" className={fieldClass} />
       <input name="slug" placeholder="Slug" className={fieldClass} />
@@ -110,7 +120,10 @@ export function CategoryForm({ categories }: { categories: CategoryOption[] }) {
         ))}
       </select>
       <input name="sortOrder" type="number" placeholder="Sort order" className={fieldClass} />
-      <input name="images" type="file" accept="image/*" />
+      <label className="text-sm">
+        Photo
+        <input name="images" type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="mt-1.5 block w-full text-sm" />
+      </label>
       {state.error ? <p className="text-sm text-ember">{state.error}</p> : null}
       <button className={`${buttonClass} w-fit`} disabled={pending}>
         {pending ? "Saving" : "Add category"}
@@ -122,7 +135,7 @@ export function CategoryForm({ categories }: { categories: CategoryOption[] }) {
 export function BannerForm() {
   const [state, action, pending] = useActionState(saveBanner, initial);
   return (
-    <form action={action} className="grid max-w-xl gap-3 rounded-2xl border border-line bg-white p-5">
+    <form action={action} encType="multipart/form-data" className="grid max-w-xl gap-3 rounded-2xl border border-line bg-white p-5">
       <h2 className="font-display text-2xl">New banner</h2>
       <input name="eyebrow" placeholder="Eyebrow" className={fieldClass} />
       <input name="title" required placeholder="Title" className={fieldClass} />
@@ -137,7 +150,10 @@ export function BannerForm() {
         <input type="checkbox" name="active" defaultChecked />
         Active
       </label>
-      <input name="images" type="file" accept="image/*" />
+      <label className="text-sm">
+        Photo
+        <input name="images" type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="mt-1.5 block w-full text-sm" />
+      </label>
       {state.error ? <p className="text-sm text-ember">{state.error}</p> : null}
       <button className={`${buttonClass} w-fit`} disabled={pending}>
         {pending ? "Saving" : "Add banner"}

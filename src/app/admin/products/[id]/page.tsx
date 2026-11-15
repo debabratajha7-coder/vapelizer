@@ -11,20 +11,25 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   return (
     <div className="space-y-8">
       <h1 className="font-display text-4xl">Edit product</h1>
-      {product.images.length > 0 ? (
-        <div className="flex flex-wrap gap-3">
-          {product.images.map((image) => (
-            <form key={image.url} action={removeProductImage} className="w-28">
-              <input type="hidden" name="productId" value={product.id} />
-              <input type="hidden" name="publicId" value={image.publicId} />
-              <input type="hidden" name="url" value={image.url} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={image.url} alt="" className="h-28 w-28 rounded-xl object-cover" />
-              <button className="mt-1 text-xs text-ember">Remove</button>
-            </form>
-          ))}
-        </div>
-      ) : null}
+      <section>
+        <p className="text-sm font-medium">Current photos</p>
+        {product.images.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-3">
+            {product.images.map((image) => (
+              <form key={image.url} action={removeProductImage} className="w-28">
+                <input type="hidden" name="productId" value={product.id} />
+                <input type="hidden" name="publicId" value={image.publicId} />
+                <input type="hidden" name="url" value={image.url} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={image.url} alt="" className="h-28 w-28 rounded-xl border border-line object-cover" />
+                <button className="mt-1 text-xs text-ember">Remove</button>
+              </form>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-muted">No photos yet. Use the upload field in the form below.</p>
+        )}
+      </section>
       <ProductForm categories={categories} product={product} />
       <form action={deleteProduct}>
         <input type="hidden" name="id" value={product.id} />
