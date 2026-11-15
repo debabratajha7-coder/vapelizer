@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "fs";
+import { isAbsolute, resolve } from "path";
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getStorage, type Storage } from "firebase-admin/storage";
@@ -7,17 +8,25 @@ const DATABASE_ID = process.env.FIREBASE_DATABASE_ID || "vapelizer";
 const STORAGE_BUCKET =
   process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "vapelizer-store.firebasestorage.app";
 
+function resolveCredentialPath(filePath: string) {
+  return isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+}
+
 function loadCredential() {
   const json = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (json) return cert(JSON.parse(json));
 
-  const path = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (path && existsSync(path)) {
-    return cert(JSON.parse(readFileSync(path, "utf8")));
+  const configured = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (configured) {
+    const absolute = resolveCredentialPath(configured);
+    if (existsSync(absolute)) {
+      return cert(JSON.parse(readFileSync(absolute, "utf8")));
+    }
   }
 
-  if (existsSync("service-account.json")) {
-    return cert(JSON.parse(readFileSync("service-account.json", "utf8")));
+  const fallback = resolveCredentialPath("service-account.json");
+  if (existsSync(fallback)) {
+    return cert(JSON.parse(readFileSync(fallback, "utf8")));
   }
 
   return undefined;

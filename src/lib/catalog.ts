@@ -119,9 +119,13 @@ export async function load<T>(fn: () => Promise<T>) {
     return { data: await fn(), error: null as string | null };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Something went wrong";
+    const looksLikeMissingCreds =
+      message.includes("not configured") ||
+      message.includes("Could not load the default credentials") ||
+      message.includes("Unable to detect a Project Id");
     return {
       data: null as T | null,
-      error: message.includes("Firebase Admin") ? missingDatabaseMessage() : message,
+      error: looksLikeMissingCreds ? missingDatabaseMessage() : message,
     };
   }
 }
